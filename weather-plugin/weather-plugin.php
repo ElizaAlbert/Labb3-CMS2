@@ -5,7 +5,7 @@ Author: Eliza Albert
 Description: A Plugin made for a school project that displays weather data.
 */
 
-/** 1 Väderdata 
+/** 1 Väderdata / Instructions
  * Ett plugin som hämtar väderdata för vald plats, som presenteras med lämpliga bilder och färger.
  * Detta plugin har en inställningssida med minst fem olika alternativ för var på sidan det ska placeras:
  * Produktsida, shop-sida, cart, checkout eller på en specifik produkt.
@@ -13,26 +13,26 @@ Description: A Plugin made for a school project that displays weather data.
  * Tips: acf_options/api/remote_get/krokar/transienter
 */ 
 
-//Echo something out PHP OOP style
 class weatherPlugin {
 
     function __construct($arg)
     {
         echo "<br>" . $arg;
     }
-    function registerEnqueue(){
+    function registerEnqueue(){ // Function that register the action of enqueueing scripts and styles (activates function enqueue)
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
     }
-    function enqueue(){
+    function enqueue(){ // Function that enqueues scripts and styles (gets activated by function registerEnqueue)
         wp_enqueue_style('style', plugin_dir_url(__FILE__) . "assets/style.css");
         wp_enqueue_script('script', plugin_dir_url(__FILE__) . "assets/script.js");
     }
 }
- 
-if (class_exists('weatherPlugin')) {
+
+
+if (class_exists('weatherPlugin')) { 
     if(!is_admin()) { // !is_admin makes content not display on Dashboard
-    $pluginInstance = new weatherPlugin('en längre mening utan mening'); // Echos $args 
-    $pluginInstance->registerEnqueue(); // Enqueues styles and scripts (style.css and script.js)
+         $pluginInstance = new weatherPlugin('en längre mening utan mening'); // Echos $args 
+         $pluginInstance->registerEnqueue(); // Enqueues styles and scripts (style.css and script.js)
     }
 };
 
