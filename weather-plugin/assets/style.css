@@ -6,3 +6,8 @@
 .body {
   background: pink;
 }
+
+.testArg {
+  color: red;
+  background: red;
+}
