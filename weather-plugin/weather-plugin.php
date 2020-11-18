@@ -44,23 +44,64 @@ class weatherPlugin {
      {
          echo "<p>Temperatur: {$weather_data['data']['instant']['details']['air_temperature']} </p>";
          echo "<p>Vindhastighet: {$weather_data['data']['instant']['details']['wind_speed']} </p>";
-         echo "<p>Symbol: {$weather_data['data']['next_12_hours']['summary']['symbol_code']} </p>";
          echo "<p>Next 1 Hour: {$weather_data['data']['next_1_hours']['summary']['symbol_code']} </p>";
          echo "<p>Next 12 Hour: {$weather_data['data']['next_12_hours']['summary']['symbol_code']} </p>";
          echo "<p>Precipitation Amount: {$weather_data['data']['next_1_hours']['details']['precipitation_amount']} </p>";
+
+            // Switch statement that controls weather symbols (rainy weather: rainy icon, cloudy weather: cloudy icon etc...)
+             switch ($weather_data['data']['next_12_hours']['summary']['symbol_code']) {
+                 case 'cloudy':
+                        echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/cloud.png width="100" height="auto" >';
+                     break;
+                 case 'lightrain':
+                        echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrain.png width="100" height="auto" >';
+                     break;
+                case 'rain':
+                        echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/heavyrain.png width="100" height="auto" >';
+                    break;
+                case 'lightrainshowers_day':
+                        echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrainshowers_day.png width="100" height="auto" >';
+                    break;
+                case 'rainshowers_night':
+                        echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/rainshowers_night.png width="100" height="auto" >';
+                    break;
+                case 'partlycloudy_night':
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_night.png width="100" height="auto" >';
+                    break;
+                case 'partlycloudy_day':
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_day.png width="100" height="auto" >';
+                    break;
+                case 'fair_night':
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/fair_night.png width="100" height="auto" >';
+                    break;
+                case 'clearsky_night':
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/clearsky_night.png width="100" height="auto" >';
+                    break;
+                 default:
+                     # code...
+                     break;
+             }
+                  echo "<p>Symbol translation: {$weather_data['data']['next_12_hours']['summary']['symbol_code']} </p>";
      }
-     function get_weather(){
+     function get_weather(){ // Gets all data from first 'timeseries' array. 
         $response = wp_remote_get('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=57.7089&lon=11.9746');
         $body = wp_remote_retrieve_body($response); // Makes the weather data from array to string.
         $formated_body_array = json_decode($body, true);  // json_decode takes a JSON encoded string and converts it into a PHP variable. 
-        return $formated_body_array['properties']['timeseries'][0];
+        return $formated_body_array['properties']['timeseries'][0]; // Returns data of first 'timeseries'.
      }
-     function run_weather() {
-         $wdata = $this->get_weather();
+     function run_weather() { // Displays weather data received through get_weather(), caches the data, sets a time limit and checks if data is in database and if not it gets the data from the API 
+
+             $database_data = get_transient('weather_data'); // Gets cached data (transient means staying only a short time)
+
+             if ($database_data) {
+             $wdata = get_transient('weather_data');
+             } else {
+             $wdata = $this->get_weather();
+             set_transient('weather_data', $wdata, 3600); // Stores cached data, sets time limit
+              }
          $this->weather($wdata);
      }
-
-}
+     }
 
 add_action('wp_footer', 'run_weather');
 
