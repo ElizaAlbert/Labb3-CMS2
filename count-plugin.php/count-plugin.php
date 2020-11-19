@@ -2,7 +2,7 @@
 /*
 Plugin Name: Counter Plugin
 Author: Eliza Albert
-Description: A Plugin made for a school project that takes a string as a parameter and returns 'true' if the string is seven letters long.
+Description: A Plugin made for a school project that takes a string as a parameter and echos specific strings based on if the string parameter is seven characters long.
 */
 
 /** 2 Räkneplugin 
@@ -24,7 +24,7 @@ class countPlugin {
         function uninstall() {
         
     }
-        function checks_string_characters($str){
+        function is_seven_letters_long($str){
             if (strlen($str) === 7) {
                 echo "<h1> The string contains 7 characters! </h1>";
             } else {
@@ -47,6 +47,6 @@ register_deactivation_hook( __FILE__, array($newCountPlugin, 'deactivate'));
 
 }
     if(!is_admin()) { // !is_admin makes content not display on Dashboard by returning false while on Dashboard
-            $newCountPlugin->checks_string_characters('1234567'); // Gives parameter $str a value which is checked in checks_string_characters.
+            $newCountPlugin->is_seven_letters_long('1234567'); // Gives parameter $str a value which is checked in checks_string_characters.
     }
 ;
