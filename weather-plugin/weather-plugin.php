@@ -55,8 +55,7 @@ class weatherPlugin {
     }
     }
     function enqueue(){ // Function that enqueues scripts and styles (gets activated by function registerEnqueue)
-        wp_enqueue_style('style', plugin_dir_url(__FILE__) . "assets/style.css");
-        wp_enqueue_script('script', plugin_dir_url(__FILE__) . "assets/script.js");
+        wp_enqueue_style('style', plugin_dir_url(__FILE__) . "assets/style.css", array(), rand(111,9999), 'all');
     }
     function registerEnqueue(){ // Function that register the action of enqueueing scripts and styles (activates function enqueue)
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
@@ -65,47 +64,51 @@ class weatherPlugin {
     // Displaying weather data
      function weather($weather_data)
     {
-        echo "<section class='weather-plugin-area'>";
-        echo "<h1> Weather information in Gothenburg: </h1>";
-        echo "<p>Temperatur: {$weather_data['data']['instant']['details']['air_temperature']} </p>";
-        echo "<p>Vindhastighet: {$weather_data['data']['instant']['details']['wind_speed']} </p>";
-        echo "<p>Precipitation Amount: {$weather_data['data']['next_1_hours']['details']['precipitation_amount']} </p>";
+        echo "<div class='weather-plugin-area' background: black'>";
+        echo "<h1 class='title-weather-plugin'> Weather information in Gothenburg: </h1>";
+        echo "Temperature: {$weather_data['data']['instant']['details']['air_temperature']} <br>";
+        echo "Wind Speed: {$weather_data['data']['instant']['details']['wind_speed']} <br>";
+        echo "Precipitation Amount: {$weather_data['data']['next_1_hours']['details']['precipitation_amount']} <br>";
         echo "Weather in the next 1 hour: <br>";
+
+        echo "<div class='weather-img'>";
 
             // Switch statement that controls weather symbols (rainy weather: rainy icon, cloudy weather: cloudy icon etc...)
              switch ($weather_data['data']['next_1_hours']['summary']['symbol_code']) {
                  case 'cloudy':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/cloud.png width="100" height="auto" >';
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/cloud.png width="100" height="auto" >';
                      break;
                  case 'lightrain':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrain.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrain.png width="100" height="auto" >';
                      break;
                 case 'rain':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/heavyrain.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/heavyrain.png width="100" height="auto" >';
                     break;
                 case 'lightrainshowers_day':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrainshowers_day.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/lightrainshowers_day.png width="100" height="auto" >';
                     break;
                 case 'rainshowers_night':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/rainshowers_night.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/rainshowers_night.png width="100" height="auto" >';
                     break;
                 case 'partlycloudy_night':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_night.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_night.png width="100" height="auto" >';
                     break;
                 case 'partlycloudy_day':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_day.png width="100" height="auto" >';
+                    echo "<img  src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/partlycloudy_day.png width="100" height="auto" >';
                     break;
                 case 'fair_night':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/fair_night.png width="100" height="auto" >';
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/fair_night.png width="100" height="auto" >';
                     break;
                 case 'clearsky_night':
-                    echo "<img style='margin: 2em'; src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/clearsky_night.png width="100" height="auto" >';
+                    echo "<img src=" . plugin_dir_url( __DIR__ ). 'weather-plugin/assets/weather-icons/clearsky_night.png width="100" height="auto" >';
                     break;
                  default:
                     echo "Oops, couldn't obtain weather symbols.";
                      break;
              }
-                  echo "<p>Symbol translation: {$weather_data['data']['next_1_hours']['summary']['symbol_code']} </p>";               
+
+                  echo "<p class='symbol-translation'>Symbol translation: {$weather_data['data']['next_1_hours']['summary']['symbol_code']} </p>";                        
+                  echo "</div></div>";       
      }
     
    // PLACEMENT OF WEATHER DATA ON WEBSITE  
@@ -133,7 +136,6 @@ class weatherPlugin {
             add_action('wp_head', array($this, 'display_weather'));
     }
 
-
   // ACQUIRING WEATHER DATA
      function get_weather(){ // Gets all data from first 'timeseries' array. 
         $response = wp_remote_get('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=57.7089&lon=11.9746');
@@ -155,8 +157,7 @@ class weatherPlugin {
             }
             
 //Checks for the class 'weatherPlugin', then creates a new plugin instance and doesn't display content on Dashboard.
-if (class_exists('weatherPlugin')) { 
-        
+    if (class_exists('weatherPlugin')) { 
         $pluginInstance = new weatherPlugin();
         
 //activation
@@ -167,11 +168,12 @@ register_deactivation_hook( __FILE__, array($pluginInstance, 'deactivate'));
 
 //uninstall
 // register_uninstall_hook( __FILE__, array($pluginInstance, 'uninstall'));
+
 }
     if(!is_admin()) { // !is_admin makes content not display on Dashboard by returning false while on Dashboard
             $pluginInstance->registerEnqueue(); // Enqueues styles and scripts (style.css and script.js)
             $pluginInstance->register_weather_location();
-        } elseif(is_admin()){
+    } elseif(is_admin()){
                 $pluginInstance->register_weather_plugin_settingspage(); // add_action hook 
                 $pluginInstance->weather_plugin_settingspage(); // Creates a new settingspage (smiley)
      }

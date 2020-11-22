@@ -1,13 +1,26 @@
-.site-title {
-  background: red;
-  color: red;
+.weather-plugin-area {
+  background: rgb(247, 245, 245) !important;
+  border: 4em, dotted, red;
+  width: 21em;
+  padding: 1em;
+  text-align: center;
+  font-family: serif;
+  margin: 2em;
+  border-radius: 2em;
 }
 
-.body {
-  background: pink;
+.symbol-translation {
+  color: rgb(158, 158, 158);
+  font-size: 10px;
 }
 
-.testArg {
-  color: red;
-  background: red;
+.weather-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 30%;
+}
+
+.title-weather-plugin {
+  font-size: 20px;
 }
