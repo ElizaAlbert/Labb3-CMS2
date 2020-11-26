@@ -22,17 +22,6 @@ Description: A Plugin made for a school project that displays weather data.
 
 class ContactForm
 {
-    private $errors = [];
-
-
-
-    
-  function __construct()
-  {
-    add_action('init', [$this, 'messages']);
-    add_action('woocommerce_after_main_content', [$this, 'contact']);
-  }
-
   function contact()
   { 
       
@@ -42,17 +31,18 @@ class ContactForm
       <form action="<?php echo admin_url('admin-ajax.php'); ?>"> 
             <label for="name">Name: </label>
             <input type="text" name="name" id="name"><br>
+            <label for="email">Email: </label>
+            <input type="text" name="email" id="email"><br>
             <label for="message">Message: </label>
             <input type="textarea" name="textarea" id="textarea">
             <input type="submit" value="Send" id="button">
 
-            <!-- When data is sent to admin-ajax, it looks for this WordPress special Get Parameter "action", take the value and create a hook -->
-            <input type="hidden" name="action" value="dk_contactform"> 
+            <!-- When data is sent to admin-ajax, it looks for this WordPress special Get Parameter "action", takes the value and create a hook -->
+            <input type="hidden" name="action" value="my_contactform"> 
       </form>
     </div>
 
       <?php }
-    add_action('wp_ajax_dk_contactform', [$this, 'insertpost']); // Hooks action with method. Basically information received from dk_contactform input field is proccessed through insertpost() method. 
 
     if (isset($_REQUEST['sent'])) {
       echo 'Your message has been sent!';
@@ -66,14 +56,37 @@ class ContactForm
       [
         'post_title' => $_REQUEST['name'],
         'post_content' => $_REQUEST['textarea'],
-        'post_type' => 'meddelanden'
+        'post_type' => 'meddelanden',
+        'post_status' => 'publish'
       ]
+  
     );
-    update_post_meta($post_id, 'e-post', $_REQUEST['email']);
+    update_post_meta($post_id, 'email', $_REQUEST['email']); // Stores data received from the email input field in the wp_postmeta in the database.
     wp_redirect($_SERVER['HTTP_REFERER'] . '?sent=true'); // Changes URL address to a safe one. 
     die();
   }
 
+// Gets and display Custom Post Data.
+function get_CPT_data(){
+      if(!is_admin()){
+  $args = array( 
+	'post_type'   => 'meddelanden'
+);
+$scheduled = new WP_Query( $args );
+
+
+//Lägg loop inside while
+while ( $scheduled->have_posts()) : $scheduled->the_post();
+
+the_content();
+endwhile;
+      }
+
+
+
+wp_reset_postdata();
+
+}
   // Creating CPT Messages.
   function messages()
   {
@@ -85,16 +98,34 @@ class ContactForm
       'public' => true,
       'has_archive' => true
     ]);
-  }
+    }
+
+  // Enqueues scripts and styles. 
     function enqueue(){ // Function that enqueues scripts and styles (gets activated by function registerEnqueue)
         wp_enqueue_style('style', plugin_dir_url(__FILE__) . "assets/style.css", array(), rand(111,9999), 'all');
     }
-    function registerEnqueue(){ // Function that register the action of enqueueing scripts and styles (activates function enqueue)
-        add_action('wp_enqueue_scripts', array($this, 'enqueue'));
+
+    function contacttest(){
+      $this->get_CPT_data();
     }
+
+
+
+    function __construct()
+  {
+    add_action('init', [$this, 'messages']);
+    add_action('woocommerce_after_main_content', [$this, 'contact']);
+    add_action('wp_enqueue_scripts', array($this, 'enqueue'));
+    add_action('wp_ajax_my_contactform', [$this, 'insertpost']); // Hooks action with method. Basically information received from my_contactform input field is proccessed through insertpost() method. 
+    add_action('init', [$this, 'get_CPT_data']);
+    
+  }
 }
 $contact = new ContactForm();
-$contact->registerEnqueue();
 $contact->contact();
+// $contact->get_CPT_data();
+
+
+
 
 ?>
