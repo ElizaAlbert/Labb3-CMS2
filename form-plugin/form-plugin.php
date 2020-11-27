@@ -2,7 +2,7 @@
 /*
 Plugin Name: Form Plugin
 Author: Eliza Albert
-Description: A Plugin made for a school project that displays weather data.
+Description: A Contact Form Plugin made for a school project.
 */
 
 /** 3 Kontaktformulär 
@@ -45,7 +45,7 @@ class ContactForm
       <?php }
 
     if (isset($_REQUEST['sent'])) {
-      echo 'Your message has been sent!';
+      echo 'Your message has been sent! <br>' ;
     }
   }
 
@@ -66,28 +66,89 @@ class ContactForm
     die();
   }
 
+// Deactivates the plugin.
+  function deactivate(){
+    wp_delete_post($this->post_id);
+  }
+
+  
 // Gets and display Custom Post Data.
-function get_CPT_data(){
-      if(!is_admin()){
-  $args = array( 
-	'post_type'   => 'meddelanden'
-);
-$scheduled = new WP_Query( $args );
+  function get_CPT_data(){
+        if(!is_admin()){
+    $args = array( 
+    'post_type'   => 'meddelanden',
+    'meta_key'    => 'email'
+  );
+  $scheduled = new WP_Query( $args );
+ 
+
+      //Lägg loop inside while
+      while ( $scheduled->have_posts()) : $scheduled->the_post();
+      the_title();
+      the_content();
+
+      $post_id = get_the_ID(); // Gets wp_postmeta IDs
+      $email = get_post_meta($post_id, 'email', true) . "<br>"; // Echos all values of the meta_key value "email" 
+      echo $email;
 
 
-//Lägg loop inside while
-while ( $scheduled->have_posts()) : $scheduled->the_post();
 
-the_content();
-endwhile;
+      endwhile;
+      }
+      wp_reset_postdata();
       }
 
+    function contacttest(){
+      $this->get_CPT_data();
+    }
 
 
-wp_reset_postdata();
 
-}
-  // Creating CPT Messages.
+
+
+
+
+
+
+
+
+  //   // Gets and display Custom Post META Data (email).
+  // function get_meta_data(){
+  //       if(!is_admin()){
+  //   $metas = array( 
+  //   'post_type'   => 'meddelanden',
+  //   'meta_key'    => 'email',
+  //   'meta_value'
+  // );
+  // $the_query = new WP_Query($metas);
+ 
+  // var_dump($the_query);
+
+  //   if($the_query->have_posts()){
+  //     while ($the_query->have_posts()) {
+  //       $the_query->the_post();
+  //       the_title();
+  //       the_content();
+
+  //     } // end while
+  //   } // endif
+  //   die;
+  //           }
+  //         }
+  //   function contacttestMETA(){
+  //     $this->get_meta_data();
+  //   }
+
+
+
+
+
+
+
+
+
+
+// Creating CPT Messages.
   function messages()
   {
     register_post_type('meddelanden', [
@@ -100,32 +161,24 @@ wp_reset_postdata();
     ]);
     }
 
-  // Enqueues scripts and styles. 
+// Enqueues scripts and styles. 
     function enqueue(){ // Function that enqueues scripts and styles (gets activated by function registerEnqueue)
         wp_enqueue_style('style', plugin_dir_url(__FILE__) . "assets/style.css", array(), rand(111,9999), 'all');
     }
-
-    function contacttest(){
-      $this->get_CPT_data();
-    }
-
-
-
     function __construct()
   {
     add_action('init', [$this, 'messages']);
     add_action('woocommerce_after_main_content', [$this, 'contact']);
     add_action('wp_enqueue_scripts', array($this, 'enqueue'));
     add_action('wp_ajax_my_contactform', [$this, 'insertpost']); // Hooks action with method. Basically information received from my_contactform input field is proccessed through insertpost() method. 
+    //activation
+    register_activation_hook( __FILE__, [$this, 'activate']);
+    //deactivation
+    register_deactivation_hook( __FILE__, array($this, 'deactivate'));
     add_action('init', [$this, 'get_CPT_data']);
-    
+    // add_action('init', [$this, 'get_meta_data']);
   }
 }
 $contact = new ContactForm();
 $contact->contact();
-// $contact->get_CPT_data();
-
-
-
-
 ?>
