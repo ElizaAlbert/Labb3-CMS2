@@ -30,9 +30,9 @@ class ContactForm
     <!-- admin-ajax.php is located in wp-admin and is the point where data is received through forms -->
       <form action="<?php echo admin_url('admin-ajax.php'); ?>"> 
             <label for="name">Name: </label>
-            <input type="text" name="name" id="name"><br>
+            <input type="text" name="name" id="name"><br><br>
             <label for="email">Email: </label>
-            <input type="text" name="email" id="email"><br>
+            <input type="text" name="email" id="email"><br></br>
             <label for="message">Message: </label>
             <input type="textarea" name="textarea" id="textarea">
             <input type="submit" value="Send" id="button">
@@ -43,10 +43,6 @@ class ContactForm
     </div>
 
       <?php }
-
-    if (isset($_REQUEST['sent'])) {
-      echo 'Your message has been sent! <br>' ;
-    }
   }
 
   // Method that inserts the data received through the contact form and its hook, to the wp_posts in the database and into the Custom Post Type "Messages". 
@@ -66,13 +62,7 @@ class ContactForm
     die();
   }
 
-// Deactivates the plugin.
-  function deactivate(){
-    wp_delete_post($this->post_id);
-  }
-
-  
-// Gets and display Custom Post Data.
+  // Gets and display Custom Post Data.
   function get_CPT_data(){
         if(!is_admin()){
     $args = array( 
@@ -80,73 +70,57 @@ class ContactForm
     'meta_key'    => 'email'
   );
   $scheduled = new WP_Query( $args );
- 
 
       //Lägg loop inside while
       while ( $scheduled->have_posts()) : $scheduled->the_post();
-      the_title();
-      the_content();
-
       $post_id = get_the_ID(); // Gets wp_postmeta IDs
-      $email = get_post_meta($post_id, 'email', true) . "<br>"; // Echos all values of the meta_key value "email" 
-      echo $email;
+      
+      // SANITIZE EMAILS
+      $email = get_post_meta($post_id, 'email', true); // Echos all values of the meta_key value "email" 
+          if (isset($_REQUEST['sent'])) {
+              if ( is_email($email) ) {
+                echo 'Your message has been sent! <br></br>' ;
+                echo '<br></br>';
+                update_post_meta($email, 'email', sanitize_email( $email )); // Stores data received from the email input field in the wp_postmeta in the database.
+            } else {
+                echo "Please enter valid information.";
+            };
 
 
+      // SANITIZE MESSAGE FIELD
+                $input_content = get_the_content();
+          if (!empty($input_content)) {
+              if (  sanitize_text_field( $input_content) ) {
+                echo sanitize_text_field( $input_content);
+                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_postmeta in the database.
+              }
+            }
+          
 
-      endwhile;
+          
+      // SANITIZE NAME FIELD
+              $input_title = get_the_title();
+          if (isset($_REQUEST['sent'])) {
+                $input_content = get_the_content();
+              if (  sanitize_text_field( $input_content) ) {
+                echo sanitize_text_field( $input_content);
+                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_postmeta in the database.
+              }
+          }
+        }
+  endwhile;
       }
       wp_reset_postdata();
       }
 
-    function contacttest(){
-      $this->get_CPT_data();
+  function contacttest(){
+    $this->get_CPT_data();
     }
 
-
-
-
-
-
-
-
-
-
-
-  //   // Gets and display Custom Post META Data (email).
-  // function get_meta_data(){
-  //       if(!is_admin()){
-  //   $metas = array( 
-  //   'post_type'   => 'meddelanden',
-  //   'meta_key'    => 'email',
-  //   'meta_value'
-  // );
-  // $the_query = new WP_Query($metas);
- 
-  // var_dump($the_query);
-
-  //   if($the_query->have_posts()){
-  //     while ($the_query->have_posts()) {
-  //       $the_query->the_post();
-  //       the_title();
-  //       the_content();
-
-  //     } // end while
-  //   } // endif
-  //   die;
-  //           }
-  //         }
-  //   function contacttestMETA(){
-  //     $this->get_meta_data();
-  //   }
-
-
-
-
-
-
-
-
-
+// Deactivates the plugin.
+  function deactivate(){
+    wp_delete_post($this->post_id);
+  }
 
 // Creating CPT Messages.
   function messages()
