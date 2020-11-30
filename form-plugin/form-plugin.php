@@ -76,7 +76,7 @@ class ContactForm
       $post_id = get_the_ID(); // Gets wp_postmeta IDs
       
       // SANITIZE EMAILS
-      $email = get_post_meta($post_id, 'email', true); // Echos all values of the meta_key value "email" 
+      $email = get_post_meta($post_id, 'email', true); // Contains all values of the meta_key value "email" 
           if (isset($_REQUEST['sent'])) {
               if ( is_email($email) ) {
                 echo 'Your message has been sent! <br></br>' ;
@@ -92,7 +92,7 @@ class ContactForm
           if (!empty($input_content)) {
               if (  sanitize_text_field( $input_content) ) {
                 echo sanitize_text_field( $input_content);
-                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_postmeta in the database.
+                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_posts in the database.
               }
             }
           
@@ -104,7 +104,7 @@ class ContactForm
                 $input_content = get_the_content();
               if (  sanitize_text_field( $input_content) ) {
                 echo sanitize_text_field( $input_content);
-                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_postmeta in the database.
+                update_post_meta($input_content, 'post_content', sanitize_text_field( $input_content)); // Stores data received from the post_content input field in the wp_posts in the database.
               }
           }
         }
