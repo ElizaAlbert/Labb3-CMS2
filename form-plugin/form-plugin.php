@@ -35,7 +35,7 @@ class ContactForm
             <input type="text" name="email" id="email"><br></br>
             <label for="message">Message: </label>
             <input type="textarea" name="textarea" id="textarea">
-            <input type="submit" value="Send" id="button">
+
 
             <!-- When data is sent to admin-ajax, it looks for this WordPress special Get Parameter "action", takes the value and create a hook -->
             <input type="hidden" name="action" value="my_contactform"> 
