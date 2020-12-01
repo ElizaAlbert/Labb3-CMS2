@@ -21,4 +21,4 @@ This plugin contains a function that takes a string as a parameter that then get
 
 
 <h3> Test Counter Plugin </h3>
-An Addon for the Count Plugin mentioned above, that tests strings for consisting of seven characters or not, less or more characters fails, seven characters succeeds. These tests only run if the URL ends in (?testrun=yes). 
+An Addon for the Count Plugin mentioned above, that tests strings for consisting of seven characters or not, less or more characters fails, seven characters succeeds. These tests only run if the URL ends in ```?testrun=yes```. 
