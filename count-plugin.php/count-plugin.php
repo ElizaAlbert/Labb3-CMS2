@@ -12,9 +12,9 @@ defined('ABSPATH') or die ("Nope.");
 class countPlugin {
         function is_seven_letters_long($str){
             if (strlen($str) === 7) {
-                echo "<h1 class='result'> The string contains 7 characters! </h1>";
+                return true;
             } else {
-                echo "<h1 class='result'> The string contains more or less characters than 7. </h1>";
+                return false;
 
             }
     }
@@ -34,7 +34,7 @@ class countPlugin {
 <style>
 
 .result{
-    margin: 5em;
+    margin: 1em;
 }
 
 </style>
