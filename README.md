@@ -3,8 +3,8 @@
 
 
 These plugins created by me require that the following plugins are installed: <br>
-WooCommerce <br>
-Advanced Custom Fields PRO
+- WooCommerce <br>
+- Advanced Custom Fields PRO
 
 <h3> Weather Plugin :umbrella: :sunny: </h3>
 This plugin displays information about the weather in Gothenburg as well as designated weather icons. The plugin can be placed in different places of the website such as the shop, cart and on a specific product. The placement of the plugin on the website is chosen by checking the box of the desired location in the Custom Post Type "Weather". 
