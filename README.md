@@ -11,7 +11,7 @@ This plugin displays information about the weather in Gothenburg as well as desi
 
 
 <h3> Form Plugin :incoming_envelope:</h3>
-A plugin that displays a **contact form** in which a message can be submitted, the message then gets saved in the Custom Post Type **"Messages"** on the Dashboard below "Comments".
+A plugin that displays a ***contact form*** in which a message can be submitted, the message then gets saved in the Custom Post Type **"Messages"** on the Dashboard below "Comments".
 
 
 
